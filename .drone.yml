@@ -1,0 +1,26 @@
+## Drone 1.0 版本寫法
+kind: pipeline
+type: docker      # 在 Docker 內部執行管道命令
+name: clone       # 可自行定義的名稱
+
+steps:
+  - name: build-image-push-harbor                   # 事件二：可自行定義的名稱
+    image: plugins/docker                           # 使用 plugins/docker  容器
+    settings:
+      username: 
+        from_secret: docker_username
+      password: 
+        from_secret: docker_password
+      repo: fordlinox/flask
+      tags: latest
+  - name: ssh commands
+    image: appleboy/drone-ssh
+    settings:
+      host: 192.168.34.8
+      username: 
+        from_secret: servername
+      password: 
+        from_secret: serverpassword
+      port: 22
+      script:
+        - docker run -d -p 8170:8170 fordlinox/flask
