@@ -6,21 +6,23 @@ name: clone       # 可自行定義的名稱
 steps:
   - name: build-image-push-harbor                   # 事件二：可自行定義的名稱
     image: plugins/docker                           # 使用 plugins/docker  容器
-    settings:
-      username: 
-        from_secret: docker_username
+    settings:                                       # plugin/docker 使用的設定做indent接續要執行的設定
+      username:                                     #設定要push到的位置的dockerhub帳號
+        from_secret: docker_username                #use the function which drone gived to set username and passwd as ciphertext 
       password: 
         from_secret: docker_password
-      repo: fordlinox/flask
-      tags: latest
-  - name: ssh commands
-    image: appleboy/drone-ssh
-    settings:
-      host: 192.168.34.8
+      repo: fordlinox/flask_web                          #troget repo
+      tags: latest                                   #set the latest image push with a tag:latest
+                                       #pugin will automatically tag the image using the standard form
+                         #configuration with tag suffix
+  - name: ssh commands                               # step2 use ssh to command the target vm doing sth
+    image: appleboy/drone-ssh                         
+    settings:  
+      host: 192.168.34.8                             #target host 
       username: 
         from_secret: servername
       password: 
         from_secret: serverpassword
       port: 22
-      script:
-        - docker run -d -p 8170:8170 fordlinox/flask
+      script:                                      #specific form for ssh : add command line to vm below the script
+        - docker run -d -p 8170:8170 fordlinox/flask_web
