@@ -24,5 +24,7 @@ steps:
       password: 
         from_secret: serverpassword
       port: 22
-      script:                                      #specific form for ssh : add command line to vm below the script
-        - docker run -d -p 8170:8170 fordlinox/flask_web
+      script:
+        - docker rm -f flask
+        - docker rmi fordlinox/flask_web         #specific form for ssh : add command line to vm below the script
+        - docker run -d -p 8170:8170 --name=flask fordlinox/flask_web
